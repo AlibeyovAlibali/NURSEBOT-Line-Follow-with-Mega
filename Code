@@ -1,0 +1,137 @@
+#define READ 22
+int oxu;
+
+#define WRITE 23
+
+#define ENA 4
+#define IN1 5
+#define IN2 6
+#define IN3 7
+#define IN4 8
+#define ENB 9
+
+int lineval1;
+int lineval2;
+
+int pin1 = 10;
+int pin2 = 11;
+
+bool Go = LOW;
+bool Come = LOW;
+
+void setup() {
+
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  pinMode(IN3,OUTPUT);
+  pinMode(IN4,OUTPUT);
+  pinMode(ENA,OUTPUT);
+  pinMode(ENB,OUTPUT);
+
+  pinMode(READ,INPUT);
+  pinMode(WRITE,OUTPUT);
+
+  pinMode(pin1,INPUT);
+  pinMode(pin2,INPUT);
+
+  Serial.begin(9600);
+  Serial.println("Start");
+}
+void loop() {
+  
+  oxu = digitalRead(READ);
+  if(oxu){
+    Go=HIGH;
+    Serial.println("1");
+  }
+  else{
+    Serial.println("0");
+    delay(200);
+  }
+  
+  if(Go){
+    lineval1=digitalRead(pin1);
+    lineval2=digitalRead(pin2);
+   if(Come){
+    //END
+     if(lineval2){
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,LOW);
+         digitalWrite(IN4,HIGH);
+         analogWrite(ENA,255);
+         analogWrite(ENB,255);
+         delay(6000);
+         Come=LOW;
+         Go=LOW;
+         digitalWrite(WRITE,HIGH);
+         delay(6000);
+     }
+     //Coming back
+     else{
+        //soldan saga
+        if(lineval1){
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,HIGH);
+         digitalWrite(IN4,LOW);
+         analogWrite(ENA,255);
+         analogWrite(ENB,130);
+        }
+        //right to left
+        else{
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,HIGH);
+         digitalWrite(IN4,LOW);
+         analogWrite(ENA,130);
+         analogWrite(ENB,255);
+        }
+      }
+   }
+   //Go
+   else{
+    //going end
+    if(lineval2){
+         delay(120000);
+         digitalWrite(IN1,LOW);
+         digitalWrite(IN2,HIGH);
+         digitalWrite(IN3,LOW);
+         digitalWrite(IN4,HIGH);
+         analogWrite(ENA,255);
+         analogWrite(ENB,255);
+         delay(2000);
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,LOW);
+         digitalWrite(IN4,HIGH);
+         analogWrite(ENA,255);
+         analogWrite(ENB,255);
+         delay(6000);
+         Come=HIGH;
+       }
+       //going's line follow
+       else{
+        //left to right
+        if(lineval1){
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,HIGH);
+         digitalWrite(IN4,LOW);
+         analogWrite(ENA,255);
+         analogWrite(ENB,130);
+        }
+        //right to left
+        else{
+         digitalWrite(IN1,HIGH);
+         digitalWrite(IN2,LOW);
+         digitalWrite(IN3,HIGH);
+         digitalWrite(IN4,LOW);
+         analogWrite(ENA,130);
+         analogWrite(ENB,255);
+       }
+     }
+  }
+}
+//loop
+}
